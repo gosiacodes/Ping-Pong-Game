@@ -1,5 +1,7 @@
 package application;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -7,11 +9,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class Main extends Application{
 	
-	//variable
+	// Variables
 	private static final double width = 800;
 	private static final double height = 600;
 	private static final double PLAYER_HEIGHT = 100;
@@ -23,6 +27,7 @@ public class Main extends Application{
 	private double playerTwoXPos = width - PLAYER_WIDTH;
 	private double ballXPos = width / 2;
 	private double ballYPos = height / 2;
+	private boolean gameStarted;	
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -35,30 +40,53 @@ public class Main extends Application{
 		Scene scene1 = new Scene((new StackPane(canvas)));
 		
 		// Set graphics
-		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
+		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();	
+		
+		// JavaFX Timeline - free form animation defined by KeyFrames and their duration 
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10), e -> run(graphicsContext, canvas)));
+		// Number of cycles in animation INDEFINITE = repeat indefinitely, it can be defined but must be > 0
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		
+		// Mouse control on click
+		canvas.setOnMouseClicked(e ->  gameStarted = true);
+		
+		primaryStage.setScene(scene1);
+		primaryStage.show();
+		timeline.play();
+	}
+
+	private void run(GraphicsContext graphicsContext, Canvas canvas) {
 		// Set background color
 		graphicsContext.setFill(Color.FORESTGREEN);
 		graphicsContext.fillRect(0, 0, width, height);
 				
 		// Set text
 		graphicsContext.setFill(Color.WHITE);
-		graphicsContext.setFont(Font.font(25));
-
+		graphicsContext.setFont(Font.font(25));	
+		
 		// Draw player 1 & 2
 		graphicsContext.fillRect(playerTwoXPos, playerTwoYPos, PLAYER_WIDTH, PLAYER_HEIGHT);
 		graphicsContext.fillRect(playerOneXPos, playerOneYPos, PLAYER_WIDTH, PLAYER_HEIGHT);
 		
-		// Draw the ball
-		graphicsContext.fillOval(ballXPos, ballYPos, BALL_R, BALL_R);
-		
-		// Draw line
-		graphicsContext.setStroke(Color.WHITE);
-		graphicsContext.setLineDashes(5);
-		graphicsContext.setLineWidth(1);
-		graphicsContext.strokeLine(400, 600, 400, 0);
-		
-		primaryStage.setScene(scene1);
-		primaryStage.show();
+		if(gameStarted) {
+			// Draw line in the middle
+			graphicsContext.setStroke(Color.WHITE);
+			//graphicsContext.setLineDashes(5);
+			graphicsContext.setLineWidth(1);
+			graphicsContext.strokeLine(width / 2, height, width / 2, 0);
+			
+			// Mouse control on move
+			canvas.setOnMouseMoved(e ->  playerOneYPos  = e.getY());
+			
+			// Draw the ball
+			graphicsContext.fillOval(ballXPos, ballYPos, BALL_R, BALL_R);			
+		}
+		else {
+			// Set the start text
+			graphicsContext.setStroke(Color.WHITE);
+			graphicsContext.setTextAlign(TextAlignment.CENTER);
+			graphicsContext.strokeText("Click to start game", width / 2, height / 2);
+		}
 		
 	}
 
