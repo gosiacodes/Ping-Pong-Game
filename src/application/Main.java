@@ -1,5 +1,7 @@
 package application;
 
+import java.util.Random;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -27,7 +29,9 @@ public class Main extends Application{
 	private double playerTwoXPos = width - PLAYER_WIDTH;
 	private double ballXPos = width / 2;
 	private double ballYPos = height / 2;
-	private boolean gameStarted;	
+	private boolean gameStarted;
+	private int ballYSpeed = 1;
+	private int ballXSpeed = 1;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -43,7 +47,7 @@ public class Main extends Application{
 		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();	
 		
 		// JavaFX Timeline - free form animation defined by KeyFrames and their duration 
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10), e -> run(graphicsContext, canvas)));
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10), e -> runGame(graphicsContext, canvas)));
 		// Number of cycles in animation INDEFINITE = repeat indefinitely, it can be defined but must be > 0
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		
@@ -55,7 +59,7 @@ public class Main extends Application{
 		timeline.play();
 	}
 
-	private void run(GraphicsContext graphicsContext, Canvas canvas) {
+	private void runGame(GraphicsContext graphicsContext, Canvas canvas) {
 		// Set background color
 		graphicsContext.setFill(Color.FORESTGREEN);
 		graphicsContext.fillRect(0, 0, width, height);
@@ -71,22 +75,56 @@ public class Main extends Application{
 		if(gameStarted) {
 			// Draw line in the middle
 			graphicsContext.setStroke(Color.WHITE);
-			//graphicsContext.setLineDashes(5);
 			graphicsContext.setLineWidth(1);
 			graphicsContext.strokeLine(width / 2, height, width / 2, 0);
 			
 			// Mouse control on move
-			canvas.setOnMouseMoved(e ->  playerOneYPos  = e.getY());
+			canvas.setOnMouseMoved(e -> playerOneYPos = e.getY());
+			
+			// Set computer opponent following the ball
+			if(ballXPos < width - width  / 4) {
+				playerTwoYPos = ballYPos - PLAYER_HEIGHT / 2;
+			}  
+			else {
+				playerTwoYPos =  ballYPos > playerTwoYPos + PLAYER_HEIGHT / 2 ?playerTwoYPos += 1: playerTwoYPos - 1;
+			}
 			
 			// Draw the ball
-			graphicsContext.fillOval(ballXPos, ballYPos, BALL_R, BALL_R);			
+			graphicsContext.fillOval(ballXPos, ballYPos, BALL_R, BALL_R);
+			
+			// Set ball movement
+			ballXPos+=ballXSpeed;
+			ballYPos+=ballYSpeed;	
 		}
 		else {
 			// Set the start text
 			graphicsContext.setStroke(Color.WHITE);
 			graphicsContext.setTextAlign(TextAlignment.CENTER);
 			graphicsContext.strokeText("Click to start game", width / 2, height / 2);
+			
+			// Reset the ball start position 
+			ballXPos = width / 2;
+			ballYPos = height / 2;
+			
+			// Reset the ball speed and the direction
+			ballXSpeed = new Random().nextInt(2) == 0 ? 1: -1;
+			ballYSpeed = new Random().nextInt(2) == 0 ? 1: -1;
 		}
+		
+		// Set that the ball have to stay in canvas / on the "screen"
+		if(ballYPos > height || ballYPos < 0) ballYSpeed *=-1;
+					
+		// Increase speed of the ball after player hits it
+		if( ((ballXPos + BALL_R > playerTwoXPos) && ballYPos >= playerTwoYPos && ballYPos <= playerTwoYPos + PLAYER_HEIGHT) || 
+			((ballXPos < playerOneXPos + PLAYER_WIDTH) && ballYPos >= playerOneYPos && ballYPos <= playerOneYPos + PLAYER_HEIGHT)) {
+				ballXSpeed += ballXSpeed;
+				ballYSpeed += ballYSpeed;
+				ballXSpeed *= -1;
+				ballYSpeed *= -1;				
+		}
+		
+		// If player miss the ball, reset game
+		if(ballXPos < playerOneXPos - PLAYER_WIDTH || ballXPos > playerTwoXPos + PLAYER_WIDTH) gameStarted = false;
 		
 	}
 
