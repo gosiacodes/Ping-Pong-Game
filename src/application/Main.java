@@ -23,15 +23,17 @@ public class Main extends Application{
 	private static final double PLAYER_HEIGHT = 100;
 	private static final double PLAYER_WIDTH = 15;
 	private static final double BALL_R = 15;
-	private double playerOneYPos = height / 2;
-	private double playerTwoYPos = height / 2;
 	private double playerOneXPos = 0;
+	private double playerOneYPos = height / 2;
 	private double playerTwoXPos = width - PLAYER_WIDTH;
+	private double playerTwoYPos = height / 2;
 	private double ballXPos = width / 2;
 	private double ballYPos = height / 2;
 	private boolean gameStarted;
-	private int ballYSpeed = 1;
 	private int ballXSpeed = 1;
+	private int ballYSpeed = 1;
+	private int scoresP1 = 0;
+	private int scoresP2 = 0;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -71,6 +73,9 @@ public class Main extends Application{
 		// Draw player 1 & 2
 		graphicsContext.fillRect(playerTwoXPos, playerTwoYPos, PLAYER_WIDTH, PLAYER_HEIGHT);
 		graphicsContext.fillRect(playerOneXPos, playerOneYPos, PLAYER_WIDTH, PLAYER_HEIGHT);
+		
+		// Draw scores
+		graphicsContext.fillText(scoresP1 + "\t\t\t\t\t\t\t\t" + scoresP2, width / 2, 100);
 		
 		if(gameStarted) {
 			// Draw line in the middle
@@ -117,14 +122,25 @@ public class Main extends Application{
 		// Increase speed of the ball after player hits it
 		if( ((ballXPos + BALL_R > playerTwoXPos) && ballYPos >= playerTwoYPos && ballYPos <= playerTwoYPos + PLAYER_HEIGHT) || 
 			((ballXPos < playerOneXPos + PLAYER_WIDTH) && ballYPos >= playerOneYPos && ballYPos <= playerOneYPos + PLAYER_HEIGHT)) {
-				ballXSpeed += ballXSpeed;
-				ballYSpeed += ballYSpeed;
+				ballXSpeed += 1 * Math.signum(ballXSpeed);
+				//System.out.println("ball X Speed: " + ballXSpeed);			
+				ballYSpeed += 1 * Math.signum(ballYSpeed);
+				//System.out.println("ball Y Speed: " + ballYSpeed);
 				ballXSpeed *= -1;
 				ballYSpeed *= -1;				
 		}
 		
-		// If player miss the ball, reset game
-		if(ballXPos < playerOneXPos - PLAYER_WIDTH || ballXPos > playerTwoXPos + PLAYER_WIDTH) gameStarted = false;
+		// If player misses the ball, computer gets a point + reset game
+		if(ballXPos < playerOneXPos - PLAYER_WIDTH) {
+			scoresP2++;
+			gameStarted = false;
+		}
+					
+		// If computer misses the ball, player gets a point + reset game
+		if(ballXPos > playerTwoXPos + PLAYER_WIDTH) {  
+			scoresP1++;
+			gameStarted = false;
+		}
 		
 	}
 
