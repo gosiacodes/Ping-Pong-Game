@@ -5,12 +5,18 @@ import java.util.Random;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -42,9 +48,34 @@ public class Main extends Application{
 		primaryStage.setResizable(false);
 		
 		// Layout for scene 1
-		Canvas canvas = new Canvas(width, height);		
-		Scene scene1 = new Scene((new StackPane(canvas)));
+		BorderPane borderPane = new BorderPane();
+		Canvas canvas = new Canvas(width, height);	
+		borderPane.setCenter(canvas);
+		HBox hbButtons = new HBox();
+	    hbButtons.setSpacing(20.0);
+	    borderPane.setBottom(hbButtons);
+		Scene scene1 = new Scene((new StackPane(borderPane)));
 		
+		// Set title
+		Text titleText = new Text("PING-PONG GAME");
+		titleText.setFont(Font.font("Tahoma", FontWeight.LIGHT, 18));
+		titleText.setFill(Color.DARKGREEN);
+		borderPane.setTop(titleText);
+		borderPane.setAlignment(titleText, Pos.CENTER);
+		
+		// Set start button
+		Button startButton = new Button("Start game");
+		startButton.setPrefSize(300, 30);
+		startButton.setId("startButton");
+		
+		// Set reset button
+		Button resetButton = new Button("Reset game");
+		resetButton.setPrefSize(300, 30);
+		resetButton.setId("resetButton");
+
+		hbButtons.getChildren().addAll(startButton, resetButton);
+		hbButtons.setAlignment(Pos.CENTER);
+		 		
 		// Set graphics
 		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();	
 		
@@ -53,9 +84,17 @@ public class Main extends Application{
 		// Number of cycles in animation INDEFINITE = repeat indefinitely, it can be defined but must be > 0
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		
-		// Mouse control on click
-		canvas.setOnMouseClicked(e ->  gameStarted = true);
+		// Button "start" control 
+		startButton.setOnAction(e ->  gameStarted = true);
 		
+		// Button "reset" control 
+		resetButton.setOnAction(e ->  {
+			gameStarted = false;
+			scoresP1 = 0;
+			scoresP2 = 0;
+		});
+		
+		scene1.getStylesheets().add(getClass().getResource("application.css").toExternalForm());		
 		primaryStage.setScene(scene1);
 		primaryStage.show();
 		timeline.play();
@@ -105,7 +144,7 @@ public class Main extends Application{
 			// Set the start text
 			graphicsContext.setStroke(Color.WHITE);
 			graphicsContext.setTextAlign(TextAlignment.CENTER);
-			graphicsContext.strokeText("Click to start game", width / 2, height / 2);
+			graphicsContext.strokeText("Click the button to start game", width / 2, height / 2);
 			
 			// Reset the ball start position 
 			ballXPos = width / 2;

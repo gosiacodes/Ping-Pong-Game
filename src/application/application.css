@@ -1,0 +1,28 @@
+.root {
+    -fx-background-color: YELLOW;
+}
+
+.button {
+   
+}
+
+#startButton {
+    -fx-text-fill: DARKBLUE;
+    -fx-border-color: GREEN;
+    -fx-background-color: LIGHTGREEN;
+    -fx-border-radius: 8;
+    -fx-padding: 6  6  6  6;
+}
+
+#resetButton {
+    -fx-text-fill: DARKBLUE;
+    -fx-border-color: RED;
+    -fx-background-color: ORANGE;
+    -fx-border-radius: 8;
+    -fx-padding: 6  6  6  6;
+}
+
+.button:hover{
+	-fx-opacity: 0.7;
+}
+
