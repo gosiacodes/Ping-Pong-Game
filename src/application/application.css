@@ -1,28 +1,32 @@
 .root {
-    -fx-background-color: YELLOW;
+    -fx-background-color: #ffffb3;
+    -fx-cursor: hand;
 }
 
 .button {
-   
+	-fx-text-fill:  BLACK;
+   	-fx-border-radius: 6;
+   	-fx-font-family:  "Helvetica";
+   	-fx-font-size:  15px;
+   	-fx-pref-width: 350px;
 }
 
 #startButton {
-    -fx-text-fill: DARKBLUE;
     -fx-border-color: GREEN;
-    -fx-background-color: LIGHTGREEN;
-    -fx-border-radius: 8;
-    -fx-padding: 6  6  6  6;
+    -fx-background-color: #4dff88;    
 }
 
-#resetButton {
-    -fx-text-fill: DARKBLUE;
+#resetButton {   
     -fx-border-color: RED;
-    -fx-background-color: ORANGE;
-    -fx-border-radius: 8;
-    -fx-padding: 6  6  6  6;
+    -fx-background-color: #ff8080;  
 }
 
-.button:hover{
+.button:hover {
 	-fx-opacity: 0.7;
 }
 
+#titleText {
+	-fx-font-family:  "Helvetica";
+	-fx-text-fill:  DARKGREEN;
+	-fx-font-size:  20px;
+}

@@ -10,13 +10,13 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.effect.Reflection;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -52,25 +52,25 @@ public class Main extends Application{
 		Canvas canvas = new Canvas(width, height);	
 		borderPane.setCenter(canvas);
 		HBox hbButtons = new HBox();
-	    hbButtons.setSpacing(20.0);
+	    hbButtons.setSpacing(33.0);
 	    borderPane.setBottom(hbButtons);
+	    HBox hbTitle = new HBox();
+	    borderPane.setTop(hbTitle);
 		Scene scene1 = new Scene((new StackPane(borderPane)));
 		
 		// Set title
-		Text titleText = new Text("PING-PONG GAME");
-		titleText.setFont(Font.font("Tahoma", FontWeight.LIGHT, 18));
-		titleText.setFill(Color.DARKGREEN);
-		borderPane.setTop(titleText);
-		borderPane.setAlignment(titleText, Pos.CENTER);
+		Label titleText = new Label("PING-PONG GAME");		
+		titleText.setId("titleText");
+		
+		hbTitle.getChildren().addAll(titleText);
+		hbTitle.setAlignment(Pos.CENTER);
 		
 		// Set start button
 		Button startButton = new Button("Start game");
-		startButton.setPrefSize(300, 30);
 		startButton.setId("startButton");
 		
 		// Set reset button
 		Button resetButton = new Button("Reset game");
-		resetButton.setPrefSize(300, 30);
 		resetButton.setId("resetButton");
 
 		hbButtons.getChildren().addAll(startButton, resetButton);
@@ -114,7 +114,7 @@ public class Main extends Application{
 		graphicsContext.fillRect(playerOneXPos, playerOneYPos, PLAYER_WIDTH, PLAYER_HEIGHT);
 		
 		// Draw scores
-		graphicsContext.fillText(scoresP1 + "\t\t\t\t\t\t\t\t" + scoresP2, width / 2, 100);
+		graphicsContext.fillText(scoresP1 + "\t\t\t\t\t\t\t\t" + scoresP2, width / 2, 50);
 		
 		if(gameStarted) {
 			// Draw line in the middle
@@ -138,13 +138,20 @@ public class Main extends Application{
 			
 			// Set ball movement
 			ballXPos+=ballXSpeed;
-			ballYPos+=ballYSpeed;	
+			ballYPos+=ballYSpeed;
+			
+			graphicsContext.setEffect(null);
 		}
 		else {
 			// Set the start text
-			graphicsContext.setStroke(Color.WHITE);
+			graphicsContext.setFill(Color.YELLOW);
+			graphicsContext.setFont(new Font("Verdana", 30));
 			graphicsContext.setTextAlign(TextAlignment.CENTER);
-			graphicsContext.strokeText("Click the button to start game", width / 2, height / 2);
+			graphicsContext.fillText("Click the button to start game", width / 2, height / 2);	
+			
+			Reflection r = new Reflection();
+			r.setFraction(0.7f);			 
+			graphicsContext.setEffect(r);
 			
 			// Reset the ball start position 
 			ballXPos = width / 2;
@@ -153,6 +160,8 @@ public class Main extends Application{
 			// Reset the ball speed and the direction
 			ballXSpeed = new Random().nextInt(2) == 0 ? 1: -1;
 			ballYSpeed = new Random().nextInt(2) == 0 ? 1: -1;
+			
+			canvas.setOnMouseMoved(null);
 		}
 		
 		// Set that the ball have to stay in canvas / on the "screen"
