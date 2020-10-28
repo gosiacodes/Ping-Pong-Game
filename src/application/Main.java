@@ -11,6 +11,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Reflection;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -66,11 +67,11 @@ public class Main extends Application{
 		hbTitle.setAlignment(Pos.CENTER);
 		
 		// Set start button
-		Button startButton = new Button("Start game");
+		Button startButton = new Button("START GAME");
 		startButton.setId("startButton");
 		
 		// Set reset button
-		Button resetButton = new Button("Reset game");
+		Button resetButton = new Button("RESET GAME");
 		resetButton.setId("resetButton");
 
 		hbButtons.getChildren().addAll(startButton, resetButton);
@@ -107,14 +108,14 @@ public class Main extends Application{
 				
 		// Set text
 		graphicsContext.setFill(Color.WHITE);
-		graphicsContext.setFont(Font.font(25));	
+		graphicsContext.setFont(Font.font("Verdana", 25));
 		
 		// Draw player 1 & 2
 		graphicsContext.fillRect(playerTwoXPos, playerTwoYPos, PLAYER_WIDTH, PLAYER_HEIGHT);
 		graphicsContext.fillRect(playerOneXPos, playerOneYPos, PLAYER_WIDTH, PLAYER_HEIGHT);
 		
 		// Draw scores
-		graphicsContext.fillText(scoresP1 + "\t\t\t\t\t\t\t\t" + scoresP2, width / 2, 50);
+		graphicsContext.fillText(scoresP1 + "\t\t\t\t\t\t\t" + scoresP2, width / 2, 50);
 		
 		if(gameStarted) {
 			// Draw line in the middle
@@ -126,11 +127,11 @@ public class Main extends Application{
 			canvas.setOnMouseMoved(e -> playerOneYPos = e.getY());
 			
 			// Set computer opponent following the ball
-			if(ballXPos < width - width  / 4) {
+			if(ballXPos < width - width / 4) {
 				playerTwoYPos = ballYPos - PLAYER_HEIGHT / 2;
 			}  
 			else {
-				playerTwoYPos =  ballYPos > playerTwoYPos + PLAYER_HEIGHT / 2 ?playerTwoYPos += 1: playerTwoYPos - 1;
+				playerTwoYPos = ballYPos > playerTwoYPos + PLAYER_HEIGHT / 2 ?playerTwoYPos += 1: playerTwoYPos - 1;
 			}
 			
 			// Draw the ball
@@ -140,6 +141,7 @@ public class Main extends Application{
 			ballXPos+=ballXSpeed;
 			ballYPos+=ballYSpeed;
 			
+			// Set reflection effect to null
 			graphicsContext.setEffect(null);
 		}
 		else {
@@ -149,6 +151,7 @@ public class Main extends Application{
 			graphicsContext.setTextAlign(TextAlignment.CENTER);
 			graphicsContext.fillText("Click the button to start game", width / 2, height / 2);	
 			
+			// Set reflection effect
 			Reflection r = new Reflection();
 			r.setFraction(0.7f);			 
 			graphicsContext.setEffect(r);
@@ -161,6 +164,7 @@ public class Main extends Application{
 			ballXSpeed = new Random().nextInt(2) == 0 ? 1: -1;
 			ballYSpeed = new Random().nextInt(2) == 0 ? 1: -1;
 			
+			// Mouse control on move stopped
 			canvas.setOnMouseMoved(null);
 		}
 		
@@ -170,10 +174,8 @@ public class Main extends Application{
 		// Increase speed of the ball after player hits it
 		if( ((ballXPos + BALL_R > playerTwoXPos) && ballYPos >= playerTwoYPos && ballYPos <= playerTwoYPos + PLAYER_HEIGHT) || 
 			((ballXPos < playerOneXPos + PLAYER_WIDTH) && ballYPos >= playerOneYPos && ballYPos <= playerOneYPos + PLAYER_HEIGHT)) {
-				ballXSpeed += 1 * Math.signum(ballXSpeed);
-				//System.out.println("ball X Speed: " + ballXSpeed);			
+				ballXSpeed += 1 * Math.signum(ballXSpeed);			
 				ballYSpeed += 1 * Math.signum(ballYSpeed);
-				//System.out.println("ball Y Speed: " + ballYSpeed);
 				ballXSpeed *= -1;
 				ballYSpeed *= -1;				
 		}
