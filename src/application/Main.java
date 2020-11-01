@@ -85,7 +85,13 @@ public class Main extends Application{
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		
 		// Button "start" control 
-		startButton.setOnAction(e ->  gameStarted = true);
+		startButton.setOnAction(e ->  {
+			gameStarted = true;
+			if(scoresP1 == 5 || scoresP2 == 5) {
+				scoresP1 = 0;
+				scoresP2 = 0;
+			}
+		});
 		
 		// Button "reset" control 
 		resetButton.setOnAction(e ->  {
@@ -142,6 +148,30 @@ public class Main extends Application{
 			
 			// Set reflection effect to null
 			graphicsContext.setEffect(null);
+		}
+		else if (scoresP1 == 5 || scoresP2 == 5) {
+			gameStarted = false;
+			// Set the start text
+			graphicsContext.setFill(Color.RED);
+			graphicsContext.setFont(new Font("Verdana", 30));
+			graphicsContext.setTextAlign(TextAlignment.CENTER);
+			graphicsContext.fillText("Game over", width / 2, height / 2);	
+			
+			// Set reflection effect
+			Reflection r = new Reflection();
+			r.setFraction(0.7f);			 
+			graphicsContext.setEffect(r);
+			
+			// Reset the ball start position 
+			ballXPos = width / 2;
+			ballYPos = height / 2;
+			
+			// Reset the ball speed and the direction
+			ballXSpeed = new Random().nextInt(2) == 0 ? 1: -1;
+			ballYSpeed = new Random().nextInt(2) == 0 ? 1: -1;
+			
+			// Mouse control on move stopped
+			canvas.setOnMouseMoved(null);
 		}
 		else {
 			// Set the start text
